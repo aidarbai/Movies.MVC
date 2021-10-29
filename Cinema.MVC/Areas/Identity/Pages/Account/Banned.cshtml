@@ -1,0 +1,10 @@
+﻿@page
+@model BannedModel
+@{
+    ViewData["Title"] = "Banned";
+}
+
+<header>
+    <h1 class="text-danger">@ViewData["Title"]</h1>
+    <p class="text-danger">This account has been locked out, please contact administrator at @Model.Emails.</p>
+</header>

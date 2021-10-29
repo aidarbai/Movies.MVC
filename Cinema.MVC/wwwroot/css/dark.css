@@ -1,0 +1,88 @@
+:root {
+    --bg-primary: rgb(35, 36, 42);
+    --bg-secondary: rgb(28, 29, 33);
+    --bg-control: rgb(50, 55, 60);
+    --bg-control-active: rgb(42, 47, 59);
+    --bg-control-border: rgb(66, 71, 83);
+    --bg-control-active-border: rgb(31, 64, 148);
+    --bg-control-active-border-shadow: rgba(31, 64, 148, 0.5);
+    --btn-radius: 10px;
+    --text-primary: rgb(231, 232, 234);
+    --text-secondary: rgb(111, 120, 138);
+    --text-tertiary: rgb(203, 211, 218);
+    --text-control: rgb(211, 211, 212);
+    --text-dropdown: rgb(161, 167, 185);
+}
+
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-tertiary);
+}
+
+.navbar {
+    background-color: var(--bg-secondary);
+}
+
+.btn, .table-title .btn {
+    border-radius: var(--btn-radius);
+}
+
+.table {
+    color: var(--text-secondary);
+}
+
+.table th {
+    color: var(--text-tertiary);
+}
+
+.table-hover tbody tr:hover {
+    color: var(--text-tertiary);
+}
+
+.table-wrapper {
+    background-color: var(--bg-secondary);
+}
+
+.table-title {
+    background-color: inherit;
+    color: var(--text-tertiary);
+}
+
+.table-fixed-header thead th {
+    top: 0;
+    background-color: var(--bg-primary);
+    color: var(--text-tertiary);
+}
+
+table.table tr th, table.table tr td {
+    border-color: var(--bg-primary);
+}
+
+.form-control {
+    background-color: var(--bg-control);
+    border-color: var(--bg-control-border);
+}
+
+.form-control:focus {
+    background-color: var(--bg-control-active);
+    border-color: var(--bg-control-active-border);
+    box-shadow: 0 0 0 0.2rem var(--bg-control-active-border-shadow);
+    color: var(--text-control);
+}
+
+.dropdown-menu {
+    background-color: var(--bg-control);
+    border-color: var(--bg-control-border);
+    padding: 5px;
+}
+
+.dropdown-item {
+    margin: 0;
+    border-radius: 5px;
+    color: var(--text-dropdown);
+}
+
+.dropdown-item:hover {
+    background-color: rgb(42, 45, 53);
+    color: var(--text-control);
+}

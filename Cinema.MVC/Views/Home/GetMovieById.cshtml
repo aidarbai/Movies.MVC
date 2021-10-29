@@ -1,0 +1,142 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Cinema.DAL.Models
+
+@model MovieDTO
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = "Movie page";
+}
+
+<body class="background-image" style="background-image: linear-gradient(to right, rgb(4 5 8 / 53%) 61%, rgb(4 5 8 / 53%) 61%), url('@Model.Backdrop_path');">
+    <div class="container ">
+        <div class="row d-flex justify-content-between pt-3 pb-3">
+            <div class="mt-2 col-sm-12 col-md-8 col-lg-8 col-xl-4">
+
+                <div class="movie-poster-wrapper">
+                    <h3 class="text-center">@Model.Title</h3>
+
+                    <img src="@Model.Poster_small_path" alt="Poster" class="center rounded movie-poster" loading="lazy"
+                         decoding="async" />
+
+                    <div class="circle" data-value="@(Model.Vote_average/10)">
+                        <span>@Model.Vote_average</span>
+                    </div>
+                </div>
+
+                <div class="voting d-flex justify-content-between align-items-center mt-2">
+                    <span>Votes: @Model.Vote_count</span>
+
+                    <span>Your vote:</span>
+                    <form class="form-inline vote-form" asp-action="Vote">
+                        <input input type="hidden" class="form-control" data-val="true" name="Id" value="@Model.Id">
+                        <input input type="hidden" class="form-control sendvote" data-val="true" name="upVote" value="">
+                        <a class="vote p-2 rounded" id="upvote" var="true" data-toggle=@(!SignInManager.IsSignedIn(User) ? "tooltip" : "") title="Please login"><i class="material-icons thumb">&#xe8dc;</i></a>
+                        <a class="vote p-2 rounded" id="downvote" var="false" data-toggle=@(!SignInManager.IsSignedIn(User) ? "tooltip" : "") title="Please login"><i class="material-icons thumb">&#xe8db;</i></a>
+                    </form>
+
+                </div>
+
+                <h6 class="mt-2 message">@TempData["Message"]</h6>
+
+            </div>
+
+            <div class="mt-2 col-sm-12 col-md-8 col-lg-7">
+
+                <p class="movie-overview">@Model.Overview</p>
+                <p class="mt-4">
+                    <b>Release date:</b><br>
+                    @Model.Release_date.Value.ToString("MMMM dd, yyyy")
+                </p>
+
+                @if (!string.IsNullOrEmpty(@Model.Homepage))
+                {
+                    <p class="mt-2"><a href="@Model.Homepage" class="homepage" style="color:inherit">@Model.Homepage</a></p>
+                }
+
+                <p class="mt-4">
+                    <b>Genres:</b>
+                    @foreach (var item in Model.Genres)
+                    {
+                        <a asp-action="Genre" asp-route-id="@item.Name"><span class="badge badge-secondary p-2 ml-1">@item.Name</span></a>
+                    }
+                </p>
+
+                @if (!string.IsNullOrEmpty(Model.Youtube_path))
+                {
+                    <a href="#myModal" class="play-trailer" data-toggle="modal" data-src="@Model.Youtube_path">
+                        <span class="badge badge-warning p-2 play-trailer-badge">
+                            <i class="bi bi-play play-trailer-arrow"></i>Play trailer
+                        </span>
+                    </a>
+
+                }
+
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="mt-2 col-sm-12 col-md-8 col-lg-10">
+                <div class="comments">
+                    <p>Comments:</p>
+                    @foreach (var item in Model.Comments)
+                    {
+                        var commentUser = await UserManager.FindByIdAsync(item.User.Id);
+                        var loggedUser = await UserManager.GetUserAsync(User);
+                        <div>
+                            <p>@commentUser.FirstName @commentUser.LastName</p>
+
+                            @if (loggedUser != null && commentUser.Id == loggedUser.Id)
+                            {
+                                <form asp-action="EditComment" class="mt-4">
+                                    <div class="form-group">
+                                        <textarea class="form-control" required name="comment">@item.Text</textarea>
+                                    </div>
+                                    <input input type="hidden" class="form-control movie_Id" data-val="true" name="id" value="@Model.Id">
+                                    <input input type="hidden" class="form-control comment_Id" data-val="true" name="commentId" value="@item.Id">
+                                    <input type="submit" class="btn btn-success" value="Edit comment">
+                                    @Html.AntiForgeryToken()
+                                </form>
+                            }
+
+                            else
+                            {
+                                <div name="comment" class="comment rounded p-2">@item.Text</div>
+                            }
+
+                        </div>
+                    }
+                </div>
+
+                <form asp-action="AddComment" class="mt-4">
+                    <div class="form-group">
+                        <textarea class="form-control" required name="comment"></textarea>
+                    </div>
+                    <input input type="hidden" class="form-control" data-val="true" name="Id" value="@Model.Id">
+                    <input type="submit" class="btn btn-success" value="Post comment" data-toggle=@(!SignInManager.IsSignedIn(User) ? "tooltip" : "") title="Please login">
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-body m-0 p-0">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <div class="embed-responsive embed-responsive-16by9">
+                            <iframe class="embed-responsive-item" src="" id="video" allowscriptaccess="always" allow="autoplay; fullscreen"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>

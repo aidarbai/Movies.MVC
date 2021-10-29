@@ -1,0 +1,39 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Cinema.DAL.Models
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+
+@if (SignInManager.IsSignedIn(User))
+{
+    var user = await UserManager.GetUserAsync(User);
+
+    <li class="nav-item dropdown ">
+        <a href="#" class="nav-link text-light" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span>@user.FirstName @user.LastName </span>
+            <span class="icon-user"></span>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="nav-link d-flex flex-row align-items-center w-100 h-100 mb-2 p-2 user-menu-link" id="manage" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Profile</a>
+            <div class="dropdown-divider"></div>
+            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/" method="post">
+                <a class="nav-link d-flex flex-row align-items-center w-100 h-100 mb-2 p-2 user-menu-link" id="logout-link">Logout</a>
+            </form>
+        </div>
+    </li>
+}
+else
+{
+    <li class="nav-item dropdown">
+        <a href="#" class="nav-link text-light" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="icon-user"></span>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="nav-link d-flex flex-row align-items-center w-100 h-100 mb-2 p-2 user-menu-link" id="login" asp-area="Identity" asp-page="/Account/Login" title="Login">Login</a>
+            <div class="dropdown-divider"></div>
+            <a class="nav-link d-flex flex-row align-items-center w-100 h-100 mb-2 p-2 user-menu-link" id="register" asp-area="Identity" asp-page="/Account/Register" title="Manage">Register</a>
+        </div>
+    </li>
+}
+

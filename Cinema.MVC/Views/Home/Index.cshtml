@@ -1,0 +1,79 @@
+﻿@model List<MovieDTO>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="bg-gray rounded">
+    <div class="container swiper-wrapper">
+        <div class="my-swiper">
+            @if (ViewBag.Trailers != null)
+            {
+                foreach (var item in ViewBag.Trailers)
+                {
+                    <div class="slider-card">
+                        <a href="#myModal" class="video-btn" data-toggle="modal" data-src="@item.Youtube_path">
+                            <img class="d-block w-100 slider-img" src="@item.Horizontal_small_image_path" alt="Movie poster" loading="lazy"
+                                 decoding="async">
+                            <span class="icon-play"></span>
+                        </a>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-body m-0 p-0">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <div class="embed-responsive embed-responsive-16by9">
+                            <iframe class="embed-responsive-item" src="" id="video" allowscriptaccess="always" allow="autoplay; fullscreen"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pb-3">
+        <div class="row">
+            @if (Model != null)
+            {
+                foreach (var movie in Model)
+                {
+                    <div class="col-sm-6 col-md-4 col-lg-3 d-flex align-items-stretch ">
+                        <div class="card mt-4">
+                            <a asp-action="GetMovieById" asp-route-id="@movie.Id" class="card-link text-decoration-none text-reset">
+                                <img class="card-img-top" src="@movie.Poster_small_path" alt="Card image cap" loading="lazy"
+                                     decoding="async">
+                                <div class="circle" data-value="@(movie.Vote_average/10)">
+                                    <span>@movie.Vote_average</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+
+        <div class="clearfix mt-4">
+            <ul class="pagination">
+
+                @for (var i = 1; i <= ViewBag.TotalPages; i++)
+                {
+                    <li class="page-item @(i == ViewBag.PageNumber ? "active" : "")">
+                        <a asp-action="Index"
+                           asp-route-PageNumber="@i"
+                           class="page-link">@i</a>
+                    </li>
+                }
+
+            </ul>
+        </div>
+
+    </div>
+</div>

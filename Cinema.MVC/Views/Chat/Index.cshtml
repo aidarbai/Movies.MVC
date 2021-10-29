@@ -1,0 +1,95 @@
+﻿@using Cinema.COMMON.Constants;
+
+@{
+    ViewData["Title"] = "Chat";
+}
+<body class="background-lightgray chat-main">
+    <div class="row mt-3">
+        <div class="col-md-4 bg-white ">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <div>
+                        <strong>Connected users</strong>
+                        <div id="connectedUsers"></div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-md-8 bg-white ">
+            <div class="chat-message">
+                <ul class="list-group list-group-flush" id="messages">
+                </ul>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 chat-box bg-white">
+            <form id="message-form" class="input-group m-2">
+                <input class="form-control border no-shadow no-rounded" placeholder="Type your message here" type="text" id="message-box">
+                <span class="input-group-btn">
+                    <button class="btn btn-success no-rounded" type="submit">Send</button>
+                </span>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+
+<script src="~/js/signalr.min.js"></script>
+
+<script>
+    const messageForm = document.getElementById('message-form');
+    const messageBox = document.getElementById('message-box');
+    const messages = document.getElementById('messages');
+    const connectedUsers = document.getElementById('connectedUsers');
+    let arr = [];
+
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("@Routes.Hubs.CHAT")
+        .configureLogging(signalR.LogLevel.Information)
+        .build();
+
+    connection.on('newMessage', (sender, messageText) => {
+        const newMessage = document.createElement('li');
+        newMessage.className = "list-group-item";
+        newMessage.innerHTML = `
+                        <strong class="primary-font">${sender}</strong>
+                        <p>
+                            ${messageText}
+                        </p>
+        `
+        messages.appendChild(newMessage);
+    });
+
+    connection.on('systemMessage', (message) => {
+        arr = message.split(", ");
+        connectedUsers.innerHTML = arr.map(user =>
+            `<p>${user}</p>`
+        ).join('')
+            
+    });
+
+    connection.onclose(error => {
+        console.log('Connection closed.', error)
+    });
+
+    startConnection();
+
+    function startConnection() {
+        console.log('connecting...');
+        connection.start()
+            .then(() => console.log('connected!'))
+            .catch (() => console.log('can\'t connect'));
+    }
+
+    messageForm.addEventListener('submit', ev => {
+        ev.preventDefault();
+        const message = messageBox.value;
+        connection.invoke('SendMessage', message);
+        messageBox.value = '';
+    });
+</script>
